@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from organisations.models import UserOrganisation
+# from organisations.models import UserOrganisation
 from organisations.serializers import OrganisationSerializer
 from .models import User
 from django.contrib.auth.hashers import make_password
@@ -16,6 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
         
 class RegistrationSerializer(serializers.ModelSerializer):
     phone = serializers.CharField(max_length=20, allow_blank=False)  # Require phone number
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
@@ -24,22 +25,23 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'password': {'write_only': True},
         }
 
-    def validate_phone(self, value):
-        if not value.strip():  # Ensure phone number is not blank or just whitespace
-            raise serializers.ValidationError("Phone number cannot be blank")
-        return value
-    
     def create(self, validated_data):
-        validated_data['password'] = make_password(validated_data.get('password'))  # Ensure password is hashed
-        return super().create(validated_data)
+        user = User.objects.create_user(
+            firstName=validated_data['firstName'],
+            lastName=validated_data['lastName'],
+            email=validated_data['email'],
+            phone=validated_data['phone'],
+            password=validated_data['password']
+        )
+        return user
     
     
-class UserOrganisationSerializer(serializers.ModelSerializer):
-    organisation = OrganisationSerializer()
+# class UserOrganisationSerializer(serializers.ModelSerializer):
+#     organisation = OrganisationSerializer()
 
-    class Meta:
-        model = UserOrganisation
-        fields = ('organisation',)
+#     class Meta:
+#         model = UserOrganisation
+#         fields = ('organisation',)
 
-    def to_representation(self, instance):
-        return OrganisationSerializer(instance.organisation).data
+#     def to_representation(self, instance):
+#         return OrganisationSerializer(instance.organisation).data

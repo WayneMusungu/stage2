@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from organisations.models import Organisation, UserOrganisation
+from organisations.models import Organisation
 
 class OrganisationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,13 +12,13 @@ class OrganisationDetailSerializer(serializers.ModelSerializer):
         model = Organisation
         fields = ('orgId', 'name', 'description')
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        return {
-            'status': 'success',
-            'message': 'Organisation retrieved successfully',
-            'data': data
-        }
+    # def to_representation(self, instance):
+    #     data = super().to_representation(instance)
+    #     return {
+    #         'status': 'success',
+    #         'message': 'Organisation retrieved successfully',
+    #         'data': data
+    #     }
         
         
 class OrganisationCreateSerializer(serializers.ModelSerializer):
