@@ -31,5 +31,16 @@
                 2
             ]
         }
+    },
+    {
+        "model": "organisations.organisation",
+        "pk": 4,
+        "fields": {
+            "name": "Jon287's Organisation",
+            "description": "",
+            "users": [
+                3
+            ]
+        }
     }
 ]

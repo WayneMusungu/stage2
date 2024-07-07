@@ -188,18 +188,9 @@ class OrganisationDetailView(APIView):
             
             
 class OrganisationUserAddView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def post(self, request, id):
         try:
-            organisation = get_object_or_404(Organisation, orgId=id)
-
-            # Check if the requesting user has permission to add users to this organisation
-            if not request.user.organisations.filter(orgId=id).exists():
-                return Response({
-                    'status': 'Unauthorized',
-                    'message': 'You do not have permission to add users to this organisation',
-                }, status=status.HTTP_403_FORBIDDEN)
+            organisation = Organisation.objects.get(orgId=id)
 
             # Extract userId from request data
             userId = request.data.get('userId')
@@ -211,7 +202,7 @@ class OrganisationUserAddView(APIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
 
             # Check if the userId exists
-            user = get_object_or_404(User, userId=userId)
+            user = User.objects.get(userId=userId)
 
             # Add user to the organisation
             organisation.users.add(user)
