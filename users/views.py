@@ -1,6 +1,4 @@
-# users/views.py
 from django.contrib.auth import authenticate
-
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -16,7 +14,6 @@ class UserRegistrationView(APIView):
     def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            # Save the user with hashed password
             user = serializer.save()
 
             # Create default organisation
@@ -59,13 +56,17 @@ class UserLoginView(APIView):
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
+        
+        # try:
+        #     user = User.objects.get(email=email)
+        # except User.DoesNotExist:
+        #     return Response({
+        #         'status': 'Bad request',
+        #         'message': 'User is not registered'
+        #     }, status=status.HTTP_401_UNAUTHORIZED)
 
-        # Debug prints to check input data
-        print(f"Email: {email}")
-        print(f"Password: {password}")
 
         user = authenticate(request, email=email, password=password)
-        print(user)  # Debug print statement
 
         if user is not None:
             refresh = RefreshToken.for_user(user)
@@ -109,9 +110,9 @@ class UserDetailView(APIView):
                 'status': 'Not found',
                 'message': 'User not found'
             }, status=status.HTTP_404_NOT_FOUND)
-
-
-class OrganisationListView(APIView):
+            
+            
+class OrganisationView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -132,6 +133,30 @@ class OrganisationListView(APIView):
                 'message': 'Failed to retrieve organisations',
                 'error': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request):
+        serializer = OrganisationCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            organisation = serializer.save()
+
+            # Automatically add the requesting user to the new organisation
+            organisation.users.add(request.user)
+
+            return Response({
+                'status': 'success',
+                'message': 'Organisation created successfully',
+                'data': {
+                    'orgId': organisation.orgId,
+                    'name': organisation.name,
+                    'description': organisation.description,
+                }
+            }, status=status.HTTP_201_CREATED)
+        return Response({
+            'status': 'Bad Request',
+            'message': 'Client error',
+            'statusCode': status.HTTP_400_BAD_REQUEST,
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
                 
 
 class OrganisationDetailView(APIView):
@@ -162,34 +187,6 @@ class OrganisationDetailView(APIView):
             }, status=status.HTTP_404_NOT_FOUND)
             
             
-class OrganisationCreateView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        serializer = OrganisationCreateSerializer(data=request.data)
-        if serializer.is_valid():
-            organisation = serializer.save()
-
-            # Automatically add the requesting user to the new organisation
-            organisation.users.add(request.user)
-
-            return Response({
-                'status': 'success',
-                'message': 'Organisation created successfully',
-                'data': {
-                    'orgId': organisation.orgId,
-                    'name': organisation.name,
-                    'description': organisation.description,
-                }
-            }, status=status.HTTP_201_CREATED)
-        return Response({
-            'status': 'Bad Request',
-            'message': 'Client error',
-            'statusCode': status.HTTP_400_BAD_REQUEST,
-            'errors': serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
-
-        
 class OrganisationUserAddView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -206,6 +203,12 @@ class OrganisationUserAddView(APIView):
 
             # Extract userId from request data
             userId = request.data.get('userId')
+            
+            if not userId:
+                return Response({
+                    'status': 'Bad Request',
+                    'message': 'userId is required'
+                }, status=status.HTTP_400_BAD_REQUEST)
 
             # Check if the userId exists
             user = get_object_or_404(User, userId=userId)

@@ -11,14 +11,6 @@ class OrganisationDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organisation
         fields = ('orgId', 'name', 'description')
-
-    # def to_representation(self, instance):
-    #     data = super().to_representation(instance)
-    #     return {
-    #         'status': 'success',
-    #         'message': 'Organisation retrieved successfully',
-    #         'data': data
-    #     }
         
         
 class OrganisationCreateSerializer(serializers.ModelSerializer):
@@ -26,8 +18,9 @@ class OrganisationCreateSerializer(serializers.ModelSerializer):
         model = Organisation
         fields = ('orgId', 'name', 'description')
         extra_kwargs = {
-            'orgId': {'read_only': True},  # orgId will be generated automatically
+            'orgId': {'read_only': True},
             'name': {'required': True},
+            'description': {'required': False, 'allow_blank': True},  # Allow description to be blank
         }
 
     def create(self, validated_data):

@@ -1,18 +1,14 @@
-# users/serializers.py
-
 from rest_framework import serializers
-
-# from organisations.models import UserOrganisation
 from organisations.serializers import OrganisationSerializer
 from .models import User
 from django.contrib.auth.hashers import make_password
-
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('userId', 'firstName', 'lastName','phone')
+        
         
 class RegistrationSerializer(serializers.ModelSerializer):
     phone = serializers.CharField(max_length=20, allow_blank=False)  # Require phone number
@@ -35,13 +31,3 @@ class RegistrationSerializer(serializers.ModelSerializer):
         )
         return user
     
-    
-# class UserOrganisationSerializer(serializers.ModelSerializer):
-#     organisation = OrganisationSerializer()
-
-#     class Meta:
-#         model = UserOrganisation
-#         fields = ('organisation',)
-
-#     def to_representation(self, instance):
-#         return OrganisationSerializer(instance.organisation).data

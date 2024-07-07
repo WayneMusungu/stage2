@@ -14,7 +14,7 @@ class CustomUserManager(BaseUserManager):
 
         email = self.normalize_email(email)
         user = self.model(email=email, firstName=firstName, lastName=lastName, phone=phone)
-        user.set_password(password)
+        user.set_password(password)  
         user.save(using=self._db)
         return user
 
@@ -23,7 +23,7 @@ class CustomUserManager(BaseUserManager):
         user.is_admin = True
         user.is_active = True
         user.is_staff = True
-        user.is_superadmin = True
+        user.is_superuser = True 
         user.save(using=self._db)
         return user
 
@@ -36,7 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    is_superadmin = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['firstName', 'lastName']
@@ -44,10 +44,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     def has_perm(self, perm, obj=None):
-        return self.is_admin
+        return self.is_superuser
 
     def has_module_perms(self, app_label):
-        return self.is_admin
+        return self.is_superuser
 
     def __str__(self):
         return self.email

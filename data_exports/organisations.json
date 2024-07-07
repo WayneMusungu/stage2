@@ -1,0 +1,35 @@
+[
+    {
+        "model": "organisations.organisation",
+        "pk": 1,
+        "fields": {
+            "name": "Elizabeth's Organisation",
+            "description": "",
+            "users": [
+                2
+            ]
+        }
+    },
+    {
+        "model": "organisations.organisation",
+        "pk": 2,
+        "fields": {
+            "name": "Rodney's Organisation",
+            "description": "To promote talent in local football",
+            "users": [
+                2
+            ]
+        }
+    },
+    {
+        "model": "organisations.organisation",
+        "pk": 3,
+        "fields": {
+            "name": "Lamech's Organisation",
+            "description": "Organisation focused on green energy",
+            "users": [
+                2
+            ]
+        }
+    }
+]

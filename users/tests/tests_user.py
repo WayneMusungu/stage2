@@ -231,7 +231,7 @@ class UserDetailViewTests(TestCase):
         User.objects.all().delete()
         
 
-class OrganisationListViewTests(TestCase):
+class OrganisationTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(
@@ -241,16 +241,49 @@ class OrganisationListViewTests(TestCase):
             password='securepassword',
             phone='1234567890'
         )
-        self.org1 = Organisation.objects.create(name="Org 1")
-        self.org2 = Organisation.objects.create(name="Org 2")
-        self.org1.users.add(self.user)
-        self.list_url = reverse('organisation_list')
+        self.create_url = reverse('organisation_list_create')
+        self.list_url = reverse('organisation_list_create')
+
+    def test_create_organisation(self):
+        self.client.force_authenticate(user=self.user)
+        data = {
+            'name': "New Organisation",
+            'description': "This is a new organisation"
+        }
+        response = self.client.post(self.create_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['data']['name'], data['name'])
+        self.assertEqual(response.data['data']['description'], data['description'])
+
+        # Check if the organisation is created in the database
+        organisation = Organisation.objects.get(name=data['name'])
+        self.assertEqual(organisation.name, data['name'])
+        self.assertEqual(organisation.description, data['description'])
+        self.assertIn(self.user, organisation.users.all())
 
     def test_list_organisations(self):
         self.client.force_authenticate(user=self.user)
+        
+        # Create organisations
+        org1 = Organisation.objects.create(name="Org 1")
+        org2 = Organisation.objects.create(name="Org 2")
+        org1.users.add(self.user)
+        org2.users.add(self.user)
+
         response = self.client.get(self.list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['data']['organisations']), 1)  
+        self.assertEqual(len(response.data['data']['organisations']), 2)
+        self.assertEqual(response.data['data']['organisations'][0]['name'], org1.name)
+        self.assertEqual(response.data['data']['organisations'][1]['name'], org2.name)
+
+    def test_create_organisation_missing_name(self):
+        self.client.force_authenticate(user=self.user)
+        data = {
+            'description': "This is a new organisation without a name"
+        }
+        response = self.client.post(self.create_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('name', response.data['errors'])
 
     def tearDown(self):
         User.objects.all().delete()

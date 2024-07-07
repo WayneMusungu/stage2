@@ -85,11 +85,18 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'railway',
         'USER': 'postgres',
-        'PASSWORD': 'vrXpoAVVmKtwvaKTFwsrAEjiDczMRiSH',
-        'HOST': 'viaduct.proxy.rlwy.net',
-        'PORT': '56308',
+        'PASSWORD': 'msbOAHqqKzqDNGufVIlTYFUuiNugfGIs',
+        'HOST': 'monorail.proxy.rlwy.net',
+        'PORT': '14763',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
@@ -155,7 +162,6 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'USER_ID_FIELD': 'userId',
-    # 'ORGANISATION_ID_FIELD': 'orgId',
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=70),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
