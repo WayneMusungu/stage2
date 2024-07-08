@@ -231,7 +231,3 @@ Adhere to the following acceptance criteria for the task:
   4. **It Should Fail if there’s Duplicate Email or UserID:**
      - Attempt to register two users with the same email.
      - Verify the response contains a status code of 422 and appropriate error messages.
-
----
-
-Feel free to customize this README as needed for your specific implementation.
