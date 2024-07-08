@@ -42,5 +42,49 @@
                 3
             ]
         }
+    },
+    {
+        "model": "organisations.organisation",
+        "pk": 5,
+        "fields": {
+            "name": "Jon479's Organisation",
+            "description": "",
+            "users": [
+                4
+            ]
+        }
+    },
+    {
+        "model": "organisations.organisation",
+        "pk": 6,
+        "fields": {
+            "name": "Jon875's Organisation",
+            "description": "",
+            "users": [
+                5
+            ]
+        }
+    },
+    {
+        "model": "organisations.organisation",
+        "pk": 7,
+        "fields": {
+            "name": "Jon552's Organisation",
+            "description": "",
+            "users": [
+                6
+            ]
+        }
+    },
+    {
+        "model": "organisations.organisation",
+        "pk": 8,
+        "fields": {
+            "name": "Jon749's Organisation",
+            "description": "",
+            "users": [
+                7
+            ]
+        }
     }
 ]
